@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>darkbook</title>
+    <meta name="description" content="darkbook social network" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div id="toast-root"></div>
+
+    <div id="auth-screen" class="auth-screen active">
+      <div class="auth-shell">
+        <div class="brand-panel">
+          <div class="brand-mark">DB</div>
+          <h1>darkbook</h1>
+          <p>
+            A scarier social universe for private circles, dangerous ideas, and
+            identity-first connection.
+          </p>
+          <ul>
+            <li>Encrypted identity</li>
+            <li>Realtime updates</li>
+            <li>Private network</li>
+          </ul>
+        </div>
+
+        <div class="auth-card">
+          <div class="auth-tabs">
+            <button class="tab-btn active" data-auth-view="login">Login</button>
+            <button class="tab-btn" data-auth-view="register">Register</button>
+          </div>
+
+          <form id="login-form" class="auth-form active">
+            <label>
+              Email
+              <input type="email" id="login-email" required />
+            </label>
+            <label>
+              Password
+              <input type="password" id="login-password" required />
+            </label>
+            <button type="submit" class="primary-btn wide">Enter the network</button>
+            <button type="button" class="ghost-btn wide" data-action="demo-login">Use demo account</button>
+            <p class="tiny">
+              Lost access?
+              <a href="#" data-action="show-reset">Reset password</a>
+            </p>
+          </form>
+
+          <form id="register-form" class="auth-form">
+            <label>
+              Full name
+              <input type="text" id="register-name" required />
+            </label>
+            <label>
+              Username
+              <input type="text" id="register-username" required />
+            </label>
+            <label>
+              Email
+              <input type="email" id="register-email" required />
+            </label>
+            <label>
+              Password
+              <input type="password" id="register-password" required />
+            </label>
+            <button type="submit" class="primary-btn wide">Create account</button>
+          </form>
+
+          <form id="reset-form" class="auth-form">
+            <label>
+              Email
+              <input type="email" id="reset-email" required />
+            </label>
+            <button type="submit" class="primary-btn wide">Send recovery link</button>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <div id="app-shell" class="app-shell hidden">
+      <header class="topbar">
+        <div class="brand">
+          <div class="brand-mark small">DB</div>
+          <span>darkbook</span>
+        </div>
+
+        <div class="search-wrap">
+          <span class="icon">⌕</span>
+          <input id="global-search" type="text" placeholder="Search people, posts, pages, groups" />
+        </div>
+
+        <nav class="top-actions">
+          <button class="round-btn" data-action="toggle-notifications">🔔</button>
+          <button class="round-btn" data-action="open-messenger">✉</button>
+          <button class="round-btn" data-action="open-create-post">✎</button>
+          <div class="profile-chip" data-action="open-profile">
+            <img id="top-avatar" src="" alt="avatar" />
+            <span id="top-name">User</span>
+          </div>
+        </nav>
+      </header>
+
+      <div class="layout">
+        <aside class="left-rail">
+          <div class="panel nav-panel">
+            <button class="nav-link active" data-route="feed"><span>⌂</span> Feed</button>
+            <button class="nav-link" data-route="profile"><span>◉</span> Profile</button>
+            <button class="nav-link" data-route="friends"><span>◎</span> Friends</button>
+            <button class="nav-link" data-route="groups"><span>▣</span> Groups</button>
+            <button class="nav-link" data-route="pages"><span>⬢</span> Pages</button>
+            <button class="nav-link" data-route="stories"><span>◌</span> Stories</button>
+            <button class="nav-link" data-route="messages"><span>✉</span> Messages</button>
+            <button class="nav-link" data-route="notifications"><span>◊</span> Notifications</button>
+            <button class="nav-link" data-route="admin"><span>◫</span> Admin</button>
+            <button class="nav-link danger" id="logout-button"><span>⎋</span> Log out</button>
+          </div>
+        </aside>
+
+        <main class="main-content">
+          <section id="feed-section" class="section active">
+            <div class="composer panel">
+              <div class="composer-header">
+                <img id="composer-avatar" src="" alt="avatar" />
+                <div>
+                  <h3>Share the night</h3>
+                  <span>Publish to your feed</span>
+                </div>
+              </div>
+
+              <textarea id="post-input" rows="4" placeholder="What is happening in the dark..."></textarea>
+
+              <div class="composer-toolbar">
+                <div class="media-actions">
+                  <label class="chip">
+                    <input type="file" id="post-image-upload" accept="image/*" multiple hidden />
+                    <span>📷 Photos</span>
+                  </label>
+                  <label class="chip">
+                    <input type="file" id="post-video-upload" accept="video/*" hidden />
+                    <span>🎥 Video</span>
+                  </label>
+                </div>
+                <div class="post-options">
+                  <select id="post-visibility">
+                    <option value="public">Public</option>
+                    <option value="friends">Friends only</option>
+                    <option value="private">Only me</option>
+                  </select>
+                  <button id="publish-post" class="primary-btn">Publish</button>
+                </div>
+              </div>
+
+              <div id="media-preview" class="media-preview"></div>
+            </div>
+
+            <div class="feed-toolbar">
+              <div class="sort-group">
+                <button class="sort-btn active" data-feed-sort="top">Top</button>
+                <button class="sort-btn" data-feed-sort="recent">Recent</button>
+                <button class="sort-btn" data-feed-sort="friends">Friends</button>
+              </div>
+              <div class="feed-meta">
+                <span id="post-count">0 posts</span>
+              </div>
+            </div>
+
+            <div id="posts-container" class="posts-container"></div>
+          </section>
+
+          <section id="profile-section" class="section">
+            <div class="profile-hero panel">
+              <div class="cover"></div>
+              <div class="profile-header">
+                <img id="profile-avatar" src="" alt="" />
+                <div>
+                  <h2 id="profile-name">User</h2>
+                  <p id="profile-handle">@username</p>
+                </div>
+                <div class="profile-actions">
+                  <button class="primary-btn">Add friend</button>
+                  <button class="ghost-btn">Message</button>
+                </div>
+              </div>
+              <div class="profile-meta">
+                <span>Joined: <strong id="profile-joined">-</strong></span>
+                <span>Location: <strong id="profile-location">Unknown</strong></span>
+                <span>Followers: <strong id="profile-followers">0</strong></span>
+              </div>
+            </div>
+            <div class="section-grid">
+              <div class="panel">
+                <h3>Bio</h3>
+                <p id="profile-bio">No bio added yet.</p>
+              </div>
+              <div class="panel">
+                <h3>Privacy</h3>
+                <div class="privacy-list">
+                  <label><input type="checkbox" checked /> Public profile</label>
+                  <label><input type="checkbox" checked /> Friends can view my posts</label>
+                  <label><input type="checkbox" /> Hide activity</label>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="friends-section" class="section">
+            <div class="friends-layout panel">
+              <div class="friends-header">
+                <h3>Friend requests</h3>
+              </div>
+              <div id="friend-requests" class="request-list"></div>
+              <div class="friends-header secondary">
+                <h3>Suggestions</h3>
+              </div>
+              <div id="friend-suggestions" class="request-list"></div>
+            </div>
+          </section>
+
+          <section id="messages-section" class="section">
+            <div class="messages-layout panel">
+              <aside class="conversation-list">
+                <h3>Messages</h3>
+                <div class="conversation-item active">
+                  <div class="avatar">N</div>
+                  <div>
+                    <strong>Night Caller</strong>
+                    <small>Last seen 2m ago</small>
+                  </div>
+                </div>
+                <div class="conversation-item">
+                  <div class="avatar">R</div>
+                  <div>
+                    <strong>Raven</strong>
+                    <small>Offline</small>
+                  </div>
+                </div>
+              </aside>
+              <div class="messages-panel">
+                <div class="message-header">
+                  <strong>Night Caller</strong>
+                  <span>online</span>
+                </div>
+                <div class="chat-body">
+                  <div class="message incoming">You ready for the next move?</div>
+                  <div class="message outgoing">Always. The city is listening.</div>
+                </div>
+                <div class="chat-input-row">
+                  <input type="text" id="message-input" placeholder="Type a secure message..." />
+                  <button class="primary-btn">Send</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="notifications-section" class="section">
+            <div class="panel">
+              <div class="notification-header">
+                <h3>Notifications</h3>
+                <button class="ghost-btn small" data-action="mark-all-read">Mark all as read</button>
+              </div>
+              <div id="notifications-list" class="notification-list"></div>
+            </div>
+          </section>
+
+          <section id="groups-section" class="section">
+            <div class="panel group-panel">
+              <h3>Groups</h3>
+              <div class="group-grid">
+                <div class="group-card">
+                  <div class="group-header"><span>Night Shift</span> <em>public</em></div>
+                  <p>People building after-hours ideas and private strategy.</p>
+                  <button class="ghost-btn small">Join</button>
+                </div>
+                <div class="group-card">
+                  <div class="group-header"><span>Signal House</span> <em>private</em></div>
+                  <p>Members-only circle for conversations with trust boundaries.</p>
+                  <button class="ghost-btn small">Request</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="pages-section" class="section">
+            <div class="panel page-panel">
+              <h3>Pages</h3>
+              <div class="group-grid">
+                <div class="group-card">
+                  <div class="group-header"><span>Night Circuit</span> <em>community</em></div>
+                  <p>Stories, updates, and signals for curious minds.</p>
+                  <button class="ghost-btn small">Follow</button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section id="stories-section" class="section">
+            <div class="panel stories-panel">
+              <h3>Stories</h3>
+              <div class="story-row">
+                <div class="story-bubble active">N</div>
+                <div class="story-bubble">R</div>
+                <div class="story-bubble">M</div>
+                <div class="story-bubble">K</div>
+              </div>
+            </div>
+          </section>
+
+          <section id="admin-section" class="section">
+            <div class="panel admin-panel">
+              <h3>Admin control</h3>
+              <div class="stats-grid">
+                <div class="stat">
+                  <span>Users</span>
+                  <strong>12,284</strong>
+                </div>
+                <div class="stat">
+                  <span>Reports</span>
+                  <strong>37</strong>
+                </div>
+                <div class="stat">
+                  <span>Posts</span>
+                  <strong>92,461</strong>
+                </div>
+                <div class="stat">
+                  <span>Messages</span>
+                  <strong>641k</strong>
+                </div>
+              </div>
+              <div class="admin-actions">
+                <button class="ghost-btn">Review reports</button>
+                <button class="ghost-btn">Moderate groups</button>
+                <button class="ghost-btn">Suspend accounts</button>
+              </div>
+            </div>
+          </section>
+        </main>
+
+        <aside class="right-rail">
+          <div class="panel">
+            <h3>Contacts</h3>
+            <ul class="mini-list">
+              <li><span class="online-dot"></span> Midnight</li>
+              <li><span class="online-dot"></span> Vex</li>
+              <li><span class="offline-dot"></span> Sable</li>
+              <li><span class="offline-dot"></span> Shade</li>
+            </ul>
+          </div>
+
+          <div class="panel">
+            <h3>Suggestions</h3>
+            <div class="suggestion">
+              <div class="user-block">
+                <div class="avatar">K</div>
+                <div>
+                  <strong>Kai</strong>
+                  <small>Mutual friends: 21</small>
+                </div>
+              </div>
+              <button class="ghost-btn small">Connect</button>
+            </div>
+            <div class="suggestion">
+              <div class="user-block">
+                <div class="avatar">Z</div>
+                <div>
+                  <strong>Zara</strong>
+                  <small>Mutual friends: 12</small>
+                </div>
+              </div>
+              <button class="ghost-btn small">Connect</button>
+            </div>
+          </div>
+
+          <div class="panel">
+            <h3>Trending</h3>
+            <div class="trends">
+              <span>#midnightshift</span>
+              <span>#shadowguard</span>
+              <span>#afterhours</span>
+              <span>#citylights</span>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="./js/config.js"></script>
+    <script src="./js/supabase.js"></script>
+    <script src="./js/app.js"></script>
+  </body>
+</html>
